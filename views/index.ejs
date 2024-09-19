@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>
+    threejs webgl - materials - ground projected environment mapping
+  </title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+  <link type="text/css" rel="stylesheet" href="main.css" />
+  <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+</head>
+
+<body>
+  <div class="load">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="6">
+        <!-- left line -->
+        <path d="M 21 40 V 59">
+          <animateTransform attributeName="transform" attributeType="XML" type="rotate" values="0 21 59; 180 21 59"
+            dur="2s" repeatCount="indefinite" />
+        </path>
+        <!-- right line -->
+        <path d="M 79 40 V 59">
+          <animateTransform attributeName="transform" attributeType="XML" type="rotate" values="0 79 59; -180 79 59"
+            dur="2s" repeatCount="indefinite" />
+        </path>
+        <!-- top line -->
+        <path d="M 50 21 V 40">
+          <animate attributeName="d" values="M 50 21 V 40; M 50 59 V 40" dur="2s" repeatCount="indefinite" />
+        </path>
+        <!-- btm line -->
+        <path d="M 50 60 V 79">
+          <animate attributeName="d" values="M 50 60 V 79; M 50 98 V 79" dur="2s" repeatCount="indefinite" />
+        </path>
+        <!-- top box -->
+        <path d="M 50 21 L 79 40 L 50 60 L 21 40 Z">
+          <animate attributeName="stroke" values="rgba(255,255,255,1); rgba(100,100,100,0)" dur="2s"
+            repeatCount="indefinite" />
+        </path>
+        <!-- mid box -->
+        <path d="M 50 40 L 79 59 L 50 79 L 21 59 Z" />
+        <!-- btm box -->
+        <path d="M 50 59 L 79 78 L 50 98 L 21 78 Z">
+          <animate attributeName="stroke" values="rgba(100,100,100,0); rgba(255,255,255,1)" dur="2s"
+            repeatCount="indefinite" />
+        </path>
+        <animateTransform attributeName="transform" attributeType="XML" type="translate" values="0 0; 0 -19" dur="2s"
+          repeatCount="indefinite" />
+      </g>
+    </svg>
+  </div>
+
+  <div id="container" style="display: none">
+    <div class="color-selector">
+      <div class="color" style="background-color: #ff0000" data-color="#ff0000"></div>
+      <div class="color" style="background-color: #ffcdd2" data-color="#ffcdd2"></div>
+      <div class="color" style="background-color: #ce93d8" data-color="#ce93d8"></div>
+      <div class="color" style="background-color: #90caf9" data-color="#90caf9"></div>
+      <div class="color" style="background-color: #80deea" data-color="#80deea"></div>
+      <div class="color" style="background-color: #f4ff81" data-color="#f4ff81"></div>
+      <div class="color" style="background-color: #ff9100" data-color="#ff9100"></div>
+    </div>
+    <div class="icon-selector">
+      <img id="animation1" class="icon" src="assets/images/2X food storage.png" alt="Icon 1" data-icon="icon1">
+      <img class="icon" src="assets/images/convertible mode.png" alt="Icon 2" data-icon="icon2">
+      <img class="icon" src="assets/images/Glass finish.png" alt="Icon 3" data-icon="icon3">
+      <img class="icon" src="assets/images/LED light.png" alt="Icon 4" data-icon="icon4">
+      <img class="icon" src="assets/images/reduced bending.png" alt="Icon 5" data-icon="icon5">
+      <img class="icon" src="assets/images/toughned glass.png" alt="Icon 6" data-icon="icon6">
+      <img class="icon" src="assets/images/turbo icing.png
+      " alt="Icon 7" data-icon="icon7">
+    </div>
+  </div>
+  <!-- <div id="container1"> -->
+
+  </div>
+
+
+  <!-- button for aniamtion -->
+  <!-- <button class="button" id="animation1">Led</button> -->
+  <script src="main-bundled.js"></script>
+
+  <script id="vertexShader" type="x-shader/x-vertex">
+      varying vec3 vNormal;
+      varying vec3 vPosition;
+      varying vec2 vUv;
+      varying vec3 vReflect;
+
+      void main() {
+          vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+          vPosition = worldPosition.xyz;
+          vNormal = normalize(normalMatrix * normal);
+          vUv = uv;
+
+          vec3 cameraToVertex = normalize(worldPosition.xyz - cameraPosition);
+          vReflect = reflect(cameraToVertex, vNormal);
+
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    </script>
+
+  <script id="fragmentShader" type="x-shader/x-fragment">
+      uniform vec3 color;
+      uniform float metalness;
+      uniform float roughness;
+      uniform sampler2D tDiffuse;
+      uniform samplerCube envMap;
+
+      varying vec3 vNormal;
+      varying vec3 vPosition;
+      varying vec2 vUv;
+      varying vec3 vReflect;
+
+      void main() {
+          vec3 normal = normalize(vNormal);
+          vec3 viewDirection = normalize(-vPosition);
+
+          // Sample the texture
+          vec4 texColor = texture(tDiffuse, vUv);
+
+          // Simple shading
+          vec3 reflectedLight = reflect(viewDirection, normal);
+          float specular = pow(max(dot(viewDirection, reflectedLight), 0.0), 16.0);
+
+          // Reflections
+          vec3 reflection = textureCube(envMap, vReflect).rgb;
+
+          // Base color
+          vec3 baseColor = texColor.rgb * color;
+
+          // Final color with metalness, roughness, and reflections
+          vec3 finalColor = mix(baseColor, reflection, metalness) * (1.0 - roughness) + specular * roughness;
+
+          gl_FragColor = vec4(finalColor, texColor.a);
+      }
+    </script>
+</body>
+
+</html>
