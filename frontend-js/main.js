@@ -17,6 +17,8 @@ import Floor from "./components/Floor.js";
 import Light from "./components/Light.js";
 import Skybox from "./components/Skybox.js";
 
+import Environment from "./components/Environment.js";
+
 import WASDPlayerController from "./components/WASDPlayerController.js";
 
 let mixer;
@@ -68,6 +70,25 @@ async function init() {
     bottomColor: new THREE.Color(0x0000ff), // Blue
   });
 
+  // Create and add the environment
+  const environmentModels = [
+    {
+      id: "fantasy_house",
+      url: Paths.fantasy_house,
+      position: { x: 10, y: 0, z: 0 },
+      rotation: { x: 0, y: 0, z: 0 },
+      scale: { x: 1, y: 1, z: 1 },
+    },
+    // {
+    //   id: "env2",
+    //   url: "path/to/your/environment2.glb",
+    //   position: { x: 5, y: 0, z: 5 },
+    //   rotation: { x: 0, y: Math.PI / 4, z: 0 },
+    // },
+    // Add more models as needed
+  ];
+  const environment = new Environment(scene.getScene(), environmentModels);
+
   // Create and add a nearly endless floor to the scene with gradient dissolve effect
   const floor = new Floor({
     width: 10000,
@@ -76,16 +97,16 @@ async function init() {
     bottomColor: 0xe5e9f0, // Matching color to the skybox
   });
   scene.getScene().add(floor.getFloor());
-  // Create a Box with a basic material
-  const box = new Box({
-    position: { x: 0, y: 2, z: 0 },
-    scale: { x: 2, y: 2, z: 2 },
-    color: 0xff0000, // Red color
-  });
-  box.setMaterial(gradientMat.getMaterial());
+  // // Create a Box with a basic material
+  // const box = new Box({
+  //   position: { x: 0, y: 2, z: 0 },
+  //   scale: { x: 2, y: 2, z: 2 },
+  //   color: 0xff0000, // Red color
+  // });
+  // box.setMaterial(gradientMat.getMaterial());
 
-  // Add the box to your scene
-  scene.getScene().add(box.getBox());
+  // // Add the box to your scene
+  // scene.getScene().add(box.getBox());
 
   setTimeout(() => {
     const loadingpage = document.querySelector(".load");

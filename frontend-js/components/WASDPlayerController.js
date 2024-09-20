@@ -124,10 +124,10 @@ export default class WASDPlayerController {
       this.keysPressed.right;
 
     if (isMoving) {
-      this.playAnimation(this.walkingAction, true); // Play walking animation
+      this.playAnimation(this.walkingAction); // Play walking animation
       this.rotatePlayer(velocity); // Call rotatePlayer with velocity only
     } else {
-      this.playAnimation(this.idleAction, true); // Play idle animation
+      this.playAnimation(this.idleAction); // Play idle animation
     }
   }
 
@@ -154,13 +154,14 @@ export default class WASDPlayerController {
     this.player.quaternion.copy(currentQuaternion);
   }
 
-  playAnimation(action, loop) {
+  playAnimation(action) {
     if (this.currentAction !== action) {
+      // Fade out current action
       if (this.currentAction) {
-        this.animationPlay.playAnimation(this.currentAction); // Fade out current action
+        this.currentAction.fadeOut(0.5); // Smoothly fade out the current action
       }
-      action.setLoop(loop ? THREE.LoopRepeat : THREE.LoopOnce); // Set looping
-      action.reset().play(); // Reset and play new action
+      // Fade in the new action
+      action.reset().fadeIn(0.5).play(); // Smoothly fade in the new action
       this.currentAction = action;
     }
   }
@@ -168,7 +169,7 @@ export default class WASDPlayerController {
   updateCameraPosition() {
     if (this.player) {
       // Set camera offset for a 2.5D-like view
-      const cameraOffset = new THREE.Vector3(0, 5, 5); // Adjust the y and z values for height and distance
+      const cameraOffset = new THREE.Vector3(0, 10, 15); // Adjust the y and z values for height and distance
       const playerPosition = this.player.position.clone();
       playerPosition.add(cameraOffset);
 
