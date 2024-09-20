@@ -2,7 +2,8 @@
 
 const Paths = {
   // 3D Models
-  playerModel: "assets/models/Player.glb",
+  playerModel:
+    "assets/models/minecraft_player_wide_rigged_with_outer_layer.glb",
   fridgeModel: "",
 
   // Textures

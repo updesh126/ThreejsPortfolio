@@ -17,7 +17,7 @@ import Floor from "./components/Floor.js";
 import Light from "./components/Light.js";
 import Skybox from "./components/Skybox.js";
 
-import Player from "./components/Player";
+import WASDPlayerController from "./components/WASDPlayerController.js";
 
 let mixer;
 
@@ -28,9 +28,15 @@ async function init() {
   const animation = new AnimationPlay();
   let roomModel, fridgeModel, ledAction, customMaterial;
 
+  const clock = new THREE.Clock();
   // const envMap = await loader.loadEnvironment(Paths.envMap);
   const scene = new Scene();
 
+  const playerController = new WASDPlayerController(
+    scene.getScene(),
+    Paths.playerModel,
+    camera.getCamera() // Pass camera
+  );
   const controls = new Controls(camera.getCamera(), renderer.getRenderer());
 
   loader.loadModel(Paths.playerModel, (gltfFridge) => {
@@ -71,15 +77,15 @@ async function init() {
   });
   scene.getScene().add(floor.getFloor());
   // Create a Box with a basic material
-  // const box = new Box({
-  //   position: { x: 0, y: 2, z: 0 },
-  //   scale: { x: 2, y: 2, z: 2 },
-  //   color: 0xff0000, // Red color
-  // });
-  // box.setMaterial(gradientMat.getMaterial());
+  const box = new Box({
+    position: { x: 0, y: 2, z: 0 },
+    scale: { x: 2, y: 2, z: 2 },
+    color: 0xff0000, // Red color
+  });
+  box.setMaterial(gradientMat.getMaterial());
 
-  // // Add the box to your scene
-  // scene.getScene().add(box.getBox());
+  // Add the box to your scene
+  scene.getScene().add(box.getBox());
 
   setTimeout(() => {
     const loadingpage = document.querySelector(".load");
@@ -90,7 +96,9 @@ async function init() {
 
   function animate() {
     requestAnimationFrame(animate);
+    const deltaTime = clock.getDelta();
 
+    playerController.update(deltaTime);
     animation.update(0.01);
     if (mixer) {
       mixer.update(0.01);
