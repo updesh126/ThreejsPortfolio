@@ -116,12 +116,18 @@ export default class WASDPlayerController {
     this.player.position.x += velocity.x;
     this.player.position.z += velocity.y; // Use z-axis for forward/backward movement
 
-    // Change animation based on movement
-    if (velocity.length() > 0) {
-      this.playAnimation(this.walkingAction, true); // Loop walking
+    // Check key input states to determine animation
+    const isMoving =
+      this.keysPressed.forward ||
+      this.keysPressed.backward ||
+      this.keysPressed.left ||
+      this.keysPressed.right;
+
+    if (isMoving) {
+      this.playAnimation(this.walkingAction, true); // Play walking animation
       this.rotatePlayer(velocity); // Call rotatePlayer with velocity only
     } else {
-      this.playAnimation(this.idleAction, false); // Stop looping
+      this.playAnimation(this.idleAction, true); // Play idle animation
     }
   }
 
