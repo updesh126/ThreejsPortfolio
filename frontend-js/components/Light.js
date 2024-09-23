@@ -4,7 +4,7 @@ import * as THREE from "three";
 
 export default class Light {
   constructor({
-    ambientIntensity = 0.5,
+    ambientIntensity = 1,
     directionalIntensity = 1,
     directionalPosition = { x: 10, y: 10, z: 10 },
   } = {}) {

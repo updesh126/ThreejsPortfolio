@@ -7,7 +7,7 @@ const Paths = {
   fantasy_house: "assets/models/scene.gltf",
 
   // Textures
-  envMap: "",
+  isometric: "assets/models/isometric_game_level_low_poly.glb",
   silverMetalTexture: "",
 
   // Animation Clips
