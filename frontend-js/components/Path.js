@@ -4,10 +4,10 @@ const Paths = {
   // 3D Models
   playerModel:
     "assets/models/minecraft_player_wide_rigged_with_outer_layer.glb",
-  fantasy_house: "assets/models/scene.gltf",
+  fantasy_house: "assets/models/ground.glb",
 
   // Textures
-  isometric: "assets/models/isometric_game_level_low_poly.glb",
+  isometric: "assets/models/scene.glb",
   silverMetalTexture: "",
 
   // Animation Clips

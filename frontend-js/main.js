@@ -75,17 +75,18 @@ async function init() {
     {
       id: "fantasy_house",
       url: Paths.fantasy_house,
-      position: { x: 20, y: 0, z: 0 },
+      position: { x: 0, y: 0, z: -10 },
       rotation: { x: 0, y: 0, z: 0 },
       scale: { x: 1, y: 1, z: 1 },
     },
     {
-      id: "env2",
+      id: "isometric",
       url: Paths.isometric,
-      position: { x: 0, y: -0.6, z: -5 },
-      rotation: { x: 0, y: Math.PI / 4, z: 0 },
+      position: { x: 0, y: 0, z: -10 },
+      rotation: { x: 0, y: 0, z: 0 },
       scale: { x: 1, y: 1, z: 1 },
     },
+
     // Add more models as needed
   ];
   const environment = new Environment(scene.getScene(), environmentModels);
